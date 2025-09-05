@@ -1,0 +1,73 @@
+@startuml UML
+class Course {
+  - code : String
+  - name : String
+  - maxCapacity : int
+  + Course(code:String, name:String, maxCapacity:int)
+  + addStudent(student:Student, key:Integer) : void
+  + removeStudent(Integer key) : void
+}
+
+class Student {
+  - id : String
+  - name : String
+  - email : String
+  + Student(id:String, name:String, email:String)
+  + addCourse(Course course, key:Integer) : void
+  + removeCourse(Integer key) : void
+}
+
+class CourseService {
+  + createCourse(code:String, name:String, capacity:int) : Course
+  + listCourses() : List<Course>
+  + findCourse(code:String) : Course
+  + enrollStudent(student:Student, course:Course) : void
+  + listStudentsByCourse(course:Course) : List<Student>
+  + listCoursesByStudent(student:Student) : List<Course>
+}
+
+class StudentService {
+  + createStudent(id:String, name:String, email:String) : Student
+  + findStudent(id:String) : Student
+}
+
+class Validator <<final>> {
+  - Validator()
+  + isValidName(name:String) : boolean
+  + isValidEmail(email:String) : boolean
+  + isValidCapacity(capacity:String) : boolean
+  + createId() : String
+}
+
+class ApplicationController {
+  + ApplicationController()
+
+  + createStudent(id:String, name:String, email:String) : void
+  + searchStudent(id:String) : Student
+  + listStudents() : List<Student>
+
+  + createCourse(code:String, name:String, capacity:int) : void
+  + searchCourse(code:String) : Course
+  + listCourses() : List<Course>
+
+  + enrollStudent(student:Student, course:Course) : void
+  + listStudentsByCourse(course:Course) : List<Student>
+  + listCoursesByStudent(student:Student) : List<Course>
+}
+
+class MenuApp {
+    +start()
+    -showMenu()
+    -handleOption(option: int)
+}
+
+
+
+Course "*" --left-- "*" Student
+CourseService "1" --left--> "*" Course
+StudentService "1" --down---> "*" Student
+ApplicationController -left-> StudentService
+ApplicationController -down-> CourseService
+ApplicationController ..right..> Validator
+MenuApp --> ApplicationController
+@enduml
