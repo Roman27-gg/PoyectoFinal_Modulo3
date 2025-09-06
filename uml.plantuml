@@ -27,7 +27,7 @@ class CourseService {
 }
 
 class StudentService {
-  + createStudent(id:String, name:String, email:String) : Student
+  + createStudent(name:String, email:String) : Student
   + findStudent(id:String) : Student
 }
 
@@ -68,6 +68,7 @@ CourseService "1" --left--> "*" Course
 StudentService "1" --down---> "*" Student
 ApplicationController -left-> StudentService
 ApplicationController -down-> CourseService
-ApplicationController ..right..> Validator
 MenuApp --> ApplicationController
+CourseService ..> Validator
+StudentService ..> Validator
 @enduml
