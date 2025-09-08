@@ -6,27 +6,15 @@ public final class Validator {
     private Validator () {}
 
     public static Boolean validateName(String name){
-        if(name.matches("[a-zA-Z\\s]*") && name.length()>0 && !name.matches("\\s*")){
-            return true;
-        } else {
-            return false;
-        }
+        return (name.matches("[a-zA-Z\\s]*") && name.length()>0 && !name.matches("\\s*"));
     }
 
     public static Boolean validateEmail(String email){
-        if (email.matches("[a-zA-Z]*\\@[a-zA-Z]*") && email.length()>0 && !email.matches("\\s*")) {
-            return true;
-        } else {
-            return false;
-        }
+        return (email.matches("[a-zA-Z]*\\@[a-zA-Z]*") && email.length()>0 && !email.matches("\\s*"));
     }
 
     public static Boolean validateCapacity(String capacity){
-        if (capacity.matches("[\\d]")) {
-            return true;
-        } else {
-            return false;
-        }
+        return (capacity.matches("[0-9]*"));
     }
 
     public static String createId(){

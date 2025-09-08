@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Student {
-    private String code;
+    private final String code;
     private String name;
     private String email;
-    private Map<Integer,Course> courses;
+    private final Map<String,Course> courses;
 
     public Student(String code, String name, String email) {
         this.code = code;
@@ -28,7 +28,7 @@ public class Student {
         return email;
     }
 
-    public Map<Integer, Course> getCourses() {
+    public Map<String, Course> getCourses() {
         return courses;
     }
 
@@ -40,12 +40,21 @@ public class Student {
         this.email = email;
     }
 
-    public void addCourse(Course course, Integer key){
+    public void addCourse(Course course, String key){
         courses.put(key, course);
     }
 
-    public void removeCourse(Integer key){
+    public void removeCourse(String key){
         courses.remove(key);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("""
+            Nombre: %s
+            Email: %s
+            Codigo: %s
+        """, name, email, code);
     }
 
     

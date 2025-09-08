@@ -18,17 +18,29 @@ class Student {
 }
 
 class CourseService {
+  + addCourse(course:Course) : void
   + createCourse(code:String, name:String, capacity:int) : Course
   + listCourses() : List<Course>
-  + findCourse(code:String) : Course
+  + findCourseByCode(code:String) : Course
+  + findCourseByName(name:String) : Course
   + enrollStudent(student:Student, course:Course) : void
+  + removeStudentFromCourse(course:Course, student:Student)
   + listStudentsByCourse(course:Course) : List<Student>
-  + listCoursesByStudent(student:Student) : List<Course>
+  + isNameAvailable(name: Sting) : Boolean
+  + hasNotCourse() : Boolean
 }
 
 class StudentService {
   + createStudent(name:String, email:String) : Student
-  + findStudent(id:String) : Student
+  + findStudentById(id:String) : Student
+  + findStudentByName(name:String) : Student
+  + addStudent(student:Student) : void
+  + listCoursesByStudent(student:Student) : List<Course>
+  + listStudents() : List<Student>
+  + removeCourseFromStudent(student: Student, course:Course) : void
+  + isNameAvailable(name: Sting) : Boolean
+  + isEmailAvailable(email: Sting) : Boolean
+  + hasNotStudent() : Boolean
 }
 
 class Validator <<final>> {
@@ -40,19 +52,17 @@ class Validator <<final>> {
 }
 
 class ApplicationController {
-  + ApplicationController()
+  + createStudent() : void
+  + searchStudent() : void
+  + listStudents() : void
 
-  + createStudent(id:String, name:String, email:String) : void
-  + searchStudent(id:String) : Student
-  + listStudents() : List<Student>
+  + createCourse() : void
+  + searchCourse() : void
+  + listCourses() : void
 
-  + createCourse(code:String, name:String, capacity:int) : void
-  + searchCourse(code:String) : Course
-  + listCourses() : List<Course>
-
-  + enrollStudent(student:Student, course:Course) : void
-  + listStudentsByCourse(course:Course) : List<Student>
-  + listCoursesByStudent(student:Student) : List<Course>
+  + enrollStudent() : void
+  + listStudentsByCourse() : void
+  + listCoursesByStudent() : void
 }
 
 class MenuApp {
