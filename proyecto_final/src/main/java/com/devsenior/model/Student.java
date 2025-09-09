@@ -18,7 +18,7 @@ public class Student {
 
     public Student(){
         this.code=null;
-        this.courses=null;
+        this.courses=new HashMap<>();
     }
 
     public String getCode() {

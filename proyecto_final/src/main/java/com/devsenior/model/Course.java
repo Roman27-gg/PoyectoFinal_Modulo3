@@ -20,7 +20,7 @@ public class Course {
 
     public Course() {
         this.code = null;
-        this.students = null;
+        this.students = new HashMap<>();
     }
 
     public String getCode() {
@@ -53,6 +53,10 @@ public class Course {
     
     public void removeStudent(String key){
         students.remove(key);
+    }
+
+    public Boolean isFull(){
+        return students.size()==maxCapacity;
     }
 
     @Override

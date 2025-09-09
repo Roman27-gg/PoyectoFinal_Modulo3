@@ -55,7 +55,7 @@ public class StudentController {
                 String name = JOptionPane.showInputDialog(null, "Digite el nombre del estudiante",
                         "NOMBRE DEL ESTUDIANTE", JOptionPane.PLAIN_MESSAGE);
                 Student student = studentservice.findStudentByName(name);
-                JOptionPane.showMessageDialog(null, "Estudiante encontrado: " + student, "ESTUDIANTE ENCONTRADO",
+                JOptionPane.showMessageDialog(null, "Estudiante encontrado:\n " + student, "ESTUDIANTE ENCONTRADO",
                         JOptionPane.INFORMATION_MESSAGE);
                 return student;
             } else{
@@ -75,7 +75,7 @@ public class StudentController {
 
     public void listStudents() {
         try {
-            String message = null;
+            String message = "";
             for (Student student : studentservice.listStudents().values()) {
                 message += student.toString()+"\n"+"\n";
             }
@@ -139,7 +139,7 @@ public class StudentController {
     public void listCoursesByStudent(){
         try {
             Student student = searchStudent();
-            String message = null;
+            String message = "";
             for (Course courses : studentservice.listCoursesByStudent(student).values()) {
                 message += courses.toString()+"\n"+"\n";
             }

@@ -101,7 +101,7 @@ public class StudentService {
             logger.warn("Estudiante no encontrado para mostrar sus cursos");
             throw new StudentNotFoundException("No se encontro ningun estudiante ");
         } else if (student.getCourses().isEmpty()){
-            logger.warn("El estudiante no esta inscrito a ningun curo actualmente ");
+            logger.warn("El estudiante no esta inscrito a ningun curso actualmente ");
             throw new CourseNotFoundException("El estudiante no se encuentra inscrito a ningun curso actualmente"); 
         }
         return student.getCourses();

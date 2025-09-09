@@ -55,7 +55,7 @@ public class CourseController {
                 String name = JOptionPane.showInputDialog(null, "Digite el nombre del curso",
                         "NOMBRE DEL CURSO", JOptionPane.PLAIN_MESSAGE);
                 Course course = courseservice.findCourseByName(name);
-                JOptionPane.showMessageDialog(null, "Curso encontrado: " + course, "CURSO ENCONTRADO",
+                JOptionPane.showMessageDialog(null, "Curso encontrado:\n " + course, "CURSO ENCONTRADO",
                         JOptionPane.INFORMATION_MESSAGE);
                 return course;
             } else {
@@ -75,7 +75,7 @@ public class CourseController {
 
     public void listCourses() {
         try {
-            String message = null;
+            String message = "";
             for (Course course : courseservice.listCourses().values()) {
                 message += course.toString() + "\n" + "\n";
             }
@@ -121,7 +121,7 @@ public class CourseController {
             String message[] = new String[courseservice.listCourses().size()];
             int i = 0;
             for (Course course : courseservice.listCourses().values()) {
-                message[i] += course.getName();
+                message[i] = course.getName();
                 i++;
             }
             int option = JOptionPane.showOptionDialog(null, "¿A que curso desea inscribir a el estudiante?",
@@ -172,7 +172,7 @@ public class CourseController {
     public void listStudentsByCourse() {
         try {
             Course course = searchCourse();
-            String message = null;
+            String message = "";
             for (Student student : courseservice.listStudentsByCourse(course).values()) {
                 message += student.toString() + "\n\n";
             }

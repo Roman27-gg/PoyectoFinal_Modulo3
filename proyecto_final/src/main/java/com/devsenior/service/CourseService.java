@@ -100,7 +100,7 @@ public class CourseService {
     }
 
     public void enrrolStudent(Student student, Course course)throws Exception, CourseFullException, CourseNotFoundException{
-        if (course.getStudents().size()==course.getMaxCapacity()){
+        if (course.isFull()){
             logger.warn("El curso ya alcanzo su maxima capacidad ");
             throw new CourseFullException("El curso ya esta en su maxima capacidad ");
         } else if (hasNotCourses()){
