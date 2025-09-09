@@ -16,6 +16,11 @@ public class Student {
         courses= new HashMap<>();
     }
 
+    public Student(){
+        this.code=null;
+        this.courses=null;
+    }
+
     public String getCode() {
         return code;
     }

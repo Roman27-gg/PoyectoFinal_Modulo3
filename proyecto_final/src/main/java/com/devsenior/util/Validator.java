@@ -10,7 +10,7 @@ public final class Validator {
     }
 
     public static Boolean validateEmail(String email){
-        return (email.matches("[a-zA-Z]*\\@[a-zA-Z]*") && email.length()>0 && !email.matches("\\s*"));
+        return (email.matches("[a-zA-Z]*\\@[a-zA-Z]*(\\.[a-zA-Z]*)?(.co||.com)?") && email.length()>0 && !email.matches("\\s*"));
     }
 
     public static Boolean validateCapacity(String capacity){

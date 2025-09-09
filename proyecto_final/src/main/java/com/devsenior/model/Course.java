@@ -9,11 +9,18 @@ public class Course {
     private int maxCapacity;
     private final Map<String, Student> students;
 
+    
+
     public Course(String code, String name, int maxCapacity) {
         this.code = code;
         this.name = name;
         this.maxCapacity = maxCapacity;
         students = new HashMap<>();
+    }
+
+    public Course() {
+        this.code = null;
+        this.students = null;
     }
 
     public String getCode() {
@@ -36,7 +43,7 @@ public class Course {
         this.name = name;
     }
 
-    public void setMaxCapacity(Integer maxCapacity) {
+    public void setMaxCapacity(int maxCapacity) {
         this.maxCapacity = maxCapacity;
     }
 

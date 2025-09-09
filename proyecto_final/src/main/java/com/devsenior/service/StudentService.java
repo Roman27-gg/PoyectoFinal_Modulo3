@@ -41,17 +41,23 @@ public class StudentService {
         } else if (!isNameAvaiable(name)) {
             logger.warn("No se pudo crear el estudiante debido a que el nombre ya esta en uso");
             throw new InvalidDataException("Nombre ya en uso");
-        } else if (isEmailAvaiable(email)) {
+        } else if (!isEmailAvaiable(email)) {
             logger.warn("No se pudo crear el estudiante debido a que el email ya esta en uso");
             throw new InvalidDataException("Email ya en uso");
         } else {
             String id= Validator.createId();
-            do {
-                if (!id.equals(findStudentById(id).getCode())) {
+            while (!hasNotStudents()){
+                Boolean close = true;
+                for (Student student1 : students.values()) {
+                    if (id.equals(student1.getCode())) {
+                        id = Validator.createId();
+                        close = false;
+                    }
+                }
+                if (close){
                     break;
                 }
-                id= Validator.createId();
-            } while (true);
+            }
             Student student = new Student(id, name, email);
             addStudent(student);
             logger.info("Se creo el estudiante {} con el codigo {} ",student.getName(), student.getCode());
@@ -120,6 +126,44 @@ public class StudentService {
             course.removeStudent(student.getCode());
             student.removeCourse(course.getCode());
             logger.info("El estudiante {} con el codigo {} removio el curso {} con codigo {} de su lista de cursos y viceversa",student.getName(),student.getCode(),course.getName(),course.getCode());
+        }
+    }
+
+    public void setNewName(Student student, String name) throws StudentNotFoundException, InvalidDataException{
+         if (hasNotStudents()) {
+            logger.warn("No existen actualmente datos de ningun estudiante");
+            throw new StudentNotFoundException("No existen datos de ningun estudiante actualmente");
+        } else if (!Validator.validateName(name)){
+            logger.warn("No se pudo cambiar el nombre del estudiante {} con el codigo {} debido a que el nombre no es valido",student.getName(),student.getCode());
+            throw new InvalidDataException("Nombre no valido");
+        } else if (!students.containsValue(student)) {
+            logger.warn("Estudiante no encontrado para cambiar el nombre");
+            throw new StudentNotFoundException("No se encontro ningun estudiante ");
+        } else if (!isNameAvaiable(name)) {
+            logger.warn("El nombre ya esta en uso");
+            throw new InvalidDataException("Nombre ya esta siendo usado");
+        } else {
+            student.setName(name);
+            logger.info("El estudiante {} con codigo {} cambio su nombre",student.getName(),student.getCode());
+        }
+    }
+
+    public void setNewEmail(Student student, String email) throws StudentNotFoundException, InvalidDataException{
+        if (hasNotStudents()) {
+            logger.warn("No existen actualmente datos de ningun estudiante");
+            throw new StudentNotFoundException("No existen datos de ningun estudiante actualmente");
+        } else if(!Validator.validateEmail(email)){
+            logger.warn("No se pudo cambiar el nombre del estudiante {} con el codigo {} debido a que el emaile es no valido",student.getName(),student.getCode());
+            throw new InvalidDataException("Nombre no valido");
+        } else if (!students.containsValue(student)){
+            logger.warn("Estudiante no encontrado para cambiar el nombre");
+            throw new StudentNotFoundException("No se encontro ningun estudiante ");
+        } else if (!isEmailAvaiable(email)){
+            logger.warn("El email ya esta en uso");
+            throw new InvalidDataException("Email ya esta siendo usado");
+        } else {
+            student.setEmail(email);
+            logger.info("El estudiante {} con codigo {} cambio su email",student.getName(),student.getCode());
         }
     }
 

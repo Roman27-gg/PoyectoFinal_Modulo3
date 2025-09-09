@@ -32,7 +32,7 @@ public class CourseService {
         }
     }
 
-    public Course createCourse(String name, String code, String capacity) throws Exception, InvalidDataException {
+    public Course createCourse(String name,String capacity) throws Exception, InvalidDataException {
         if (!Validator.validateName(name)) {
             logger.warn("No se pudo crear el curso debido a nombre no valido");
             throw new InvalidDataException("Nombre no valido");
@@ -44,13 +44,19 @@ public class CourseService {
             throw new InvalidDataException("Nombre ya en uso");
         }else {
             String id = Validator.createId();
-            do {
-                if (!id.equals(findCourseByCode(code).getCode())) {
+            while (!hasNotCourses()){
+                Boolean close = true;
+                for (Course courses1 : courses.values()) {
+                    if (id.equals(courses1.getCode())) {
+                        id = Validator.createId();
+                        close = false;
+                    }
+                }
+                if (close){
                     break;
                 }
-                id = Validator.createId();
-            } while (true);
-            Course course = new Course(code, name, Integer.parseInt(capacity));
+            }
+            Course course = new Course(id, name, Integer.parseInt(capacity));
             addCourse(course);
             logger.info("Se creo el curso {} con el codigo {}", course.getName(), course.getCode());
             return course;
@@ -124,6 +130,47 @@ public class CourseService {
             student.removeCourse(course.getCode());
             course.removeStudent(student.getCode());
             logger.info("El curso {} con codigo {} removio a el estudiante {} con el codigo {} de su lista de estudiantes y viceversa",course.getName(),course.getCode(),student.getName(),student.getCode());
+        }
+    }
+
+    public void setNewName(Course course, String name) throws InvalidDataException, CourseNotFoundException{
+         if (hasNotCourses()) {
+            logger.warn("No existen actualmente datos de ningun curso");
+            throw new CourseNotFoundException("No existen datos de ningun curso actualmente");
+        } else if (!Validator.validateName(name)){
+            logger.warn("No se pudo cambiar el nombre del curso {} con el codigo {} debido a que el nombre no es valido",course.getName(),course.getCode());
+            throw new InvalidDataException("Nombre no valido");
+        } else if (!courses.containsValue(course)) {
+            logger.warn("Curso no encontrado para cambiar el nombre");
+            throw new CourseNotFoundException("No se encontro ningun curso");
+        } else if (!isNameAviable(name)) {
+            logger.warn("El nombre ya esta en uso");
+            throw new InvalidDataException("Nombre ya esta siendo usado");
+        } else {
+            course.setName(name);
+            logger.info("El curso {} con codigo {} cambio su nombre",course.getName(),course.getCode());
+        }
+    }
+
+    public void setNewCapacity(Course course, String capacity) throws InvalidDataException, CourseNotFoundException{
+        if (hasNotCourses()) {
+            logger.warn("No existen actualmente datos de ningun curso");
+            throw new CourseNotFoundException("No existen datos de ningun curso actualmente");
+        } else if (!Validator.validateCapacity(capacity)) {
+            logger.warn("No se pudo crear el curso debido a que se digito una capacidad invalida");
+            throw new InvalidDataException("capacidad no valida");
+        } else if (!courses.containsValue(course)) {
+            logger.warn("Curso no encontrado para cambiar el nombre");
+            throw new CourseNotFoundException("No se encontro ningun curso");
+        } else if (course.getStudents().size()>Integer.parseInt(capacity)){
+            logger.warn("La nueva capacidad que se quiere implementar a el curso {} con el codigo {}, no se puede implementar debido a que tiene demasiados estudiantes inscritos",course.getName(),course.getCode());
+            throw new InvalidDataException("Capacidad no valida, actualmente el curso tiene "+course.getStudents().size() +" estudiantes, remover estudiantes y volver a intentar");
+        } else if (course.getMaxCapacity() == Integer.parseInt(capacity)){
+            logger.warn("El curso {} con el codigo {} ya posee esa capacidad",course.getName(),course.getCode());
+            throw new InvalidDataException("El curso ya posee actualmente esa capacidad");
+        } else {
+            course.setMaxCapacity(Integer.parseInt(capacity));
+            logger.info("El curso {} con el codigo {} cambio su capacidad",course.getName(),course.getCode());
         }
     }
 

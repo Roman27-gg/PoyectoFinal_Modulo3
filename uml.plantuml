@@ -25,6 +25,8 @@ class CourseService {
   + findCourseByName(name:String) : Course
   + enrollStudent(student:Student, course:Course) : void
   + removeStudentFromCourse(course:Course, student:Student)
+  + setNewName(course : Course, name : String) : void
+  + setNewCapacity(course : Course, capacity : String)
   + listStudentsByCourse(course:Course) : List<Student>
   + isNameAvailable(name: Sting) : Boolean
   + hasNotCourse() : Boolean
@@ -38,6 +40,8 @@ class StudentService {
   + listCoursesByStudent(student:Student) : List<Course>
   + listStudents() : List<Student>
   + removeCourseFromStudent(student: Student, course:Course) : void
+  + setNewName(student : Student, name : String) : void
+  + setNewEmail(student : Student, email : String) : void
   + isNameAvailable(name: Sting) : Boolean
   + isEmailAvailable(email: Sting) : Boolean
   + hasNotStudent() : Boolean
@@ -51,17 +55,24 @@ class Validator <<final>> {
   + createId() : String
 }
 
-class ApplicationController {
-  + createStudent() : void
-  + searchStudent() : void
-  + listStudents() : void
-
+class CourseController {
   + createCourse() : void
   + searchCourse() : void
   + listCourses() : void
-
-  + enrollStudent() : void
+  + changeNameCourse() : void
+  + changeCapacityCourse() : void
+  + enrollStudent(studentcontroller: StudentController) : void
+  + removeStudentFromCourse() : void
   + listStudentsByCourse() : void
+}
+
+class StudentController {
+  + createStudent() : void
+  + searchStudent() : void
+  + listStudents() : void
+  + changeNameStudent() : void
+  + changeEmailStudent() : void
+  + removeCourseFromStudent() : void
   + listCoursesByStudent() : void
 }
 
@@ -76,9 +87,11 @@ class MenuApp {
 Course "*" --left-- "*" Student
 CourseService "1" --left--> "*" Course
 StudentService "1" --down---> "*" Student
-ApplicationController -left-> StudentService
-ApplicationController -down-> CourseService
-MenuApp --> ApplicationController
-CourseService ..> Validator
+CourseController -down-> CourseService
+StudentController -left-> StudentService
+MenuApp -right-> CourseController
+MenuApp -left-> StudentController
+CourseService .up.> Validator
 StudentService ..> Validator
+
 @enduml
