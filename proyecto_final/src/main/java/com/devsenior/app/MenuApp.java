@@ -9,15 +9,31 @@ import com.devsenior.controller.StudentController;
 import com.devsenior.exception.CourseNotFoundException;
 import com.devsenior.exception.StudentNotFoundException;
 
+/**
+ * Clase principal de la aplicación que muestra un menú para gestionar
+ * cursos y estudiantes mediante JOptionPane y los controladores.
+ */
 public class MenuApp {
+
+    /** Controlador para manejar las operaciones de cursos. */
     private final CourseController coursecontroller;
+
+    /** Controlador para manejar las operaciones de estudiantes. */
     private final StudentController studentcontroller;
 
+    /**
+     * Constructor que inicializa los controladores.
+     */
     public MenuApp() {
         coursecontroller = new CourseController();
         studentcontroller = new StudentController();
     }
 
+    /**
+     * Muestra el menú de opciones y devuelve la opción seleccionada.
+     * 
+     * @return El índice de la opción seleccionada, o -1 si se cancela.
+     */
     private int showMenu() {
         String message[] = { "1. Crear un nuevo curso", "2. Crear un nuevo estudiante", "3. Buscar un curso",
                 "4. Buscar un estudiante", "5. Mostrar todos los cursos", "6. Mostrar todos los estudiantes",
@@ -34,8 +50,14 @@ public class MenuApp {
         return Arrays.asList(message).indexOf(selection);
     }
 
+    /**
+     * Ejecuta la acción correspondiente a la opción seleccionada.
+     * 
+     * @param option La opción seleccionada.
+     * @return La opción ejecutada, o -1 si se cancela.
+     */
     private int handleOption(int option) {
-        if (option==-1) {
+        if (option == -1) {
             return -1;
         }
         option = (option == 15) ? 0 : option + 1;
@@ -70,11 +92,14 @@ public class MenuApp {
             case 14 -> studentcontroller.listCoursesByStudent();
             case 15 -> coursecontroller.enrollStudent(studentcontroller);
             default -> JOptionPane.showMessageDialog(null, "Cerrando el programa... hasta pronto", "CERRANDO PROGRAMA",
-                        JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.INFORMATION_MESSAGE);
         }
         return option;
     }
 
+    /**
+     * Inicia la aplicación y mantiene el bucle del menú hasta que el usuario salga.
+     */
     public void start() {
         int option;
         do {

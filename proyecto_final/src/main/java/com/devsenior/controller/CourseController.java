@@ -1,7 +1,6 @@
 package com.devsenior.controller;
 
 import java.awt.HeadlessException;
-
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -14,13 +13,27 @@ import com.devsenior.model.Course;
 import com.devsenior.model.Student;
 import com.devsenior.service.CourseService;
 
+/**
+ * Controlador para gestionar las operaciones relacionadas con los cursos.
+ * Se encarga de interactuar con el usuario mediante JOptionPane y de invocar
+ * los métodos del {@link CourseService}.
+ */
 public class CourseController {
+
+    /** Servicio que maneja la lógica de los cursos. */
     private final CourseService courseservice;
 
+    /**
+     * Constructor de la clase. Inicializa el servicio de cursos.
+     */
     public CourseController() {
         courseservice = new CourseService();
     }
 
+    /**
+     * Permite crear un nuevo curso solicitando al usuario el nombre y la capacidad.
+     * Muestra un mensaje de éxito o error según corresponda.
+     */
     public void createCourse() {
         try {
             JTextField nametext = new JTextField(10);
@@ -45,6 +58,13 @@ public class CourseController {
         }
     }
 
+    /**
+     * Permite buscar un curso ya sea por nombre o por código.
+     * Muestra el curso encontrado en un mensaje.
+     *
+     * @return El curso encontrado.
+     * @throws CourseNotFoundException Si no se encuentra el curso.
+     */
     public Course searchCourse() throws CourseNotFoundException {
         try {
             String options[] = { "Nombre", "Codigo" };
@@ -73,11 +93,14 @@ public class CourseController {
         }
     }
 
+    /**
+     * Lista todos los cursos existentes mostrando sus detalles en un mensaje.
+     */
     public void listCourses() {
         try {
             String message = "";
             for (Course course : courseservice.listCourses().values()) {
-                message += course.toString() + "\n" + "\n";
+                message += course.toString() + "\n\n";
             }
             JOptionPane.showMessageDialog(null, message, "CURSOS ACTUALES", JOptionPane.INFORMATION_MESSAGE);
         } catch (CourseNotFoundException | HeadlessException e) {
@@ -86,6 +109,10 @@ public class CourseController {
         }
     }
 
+    /**
+     * Permite cambiar el nombre de un curso existente.
+     * Muestra un mensaje de confirmación o error.
+     */
     public void changeNameCourse() {
         try {
             Course course = searchCourse();
@@ -100,14 +127,17 @@ public class CourseController {
         }
     }
 
+    /**
+     * Permite cambiar la capacidad de un curso existente.
+     * Muestra un mensaje de confirmación o error.
+     */
     public void changeCapacityCourse() {
         try {
             Course course = searchCourse();
             String capacity = JOptionPane.showInputDialog(null, "Digite cual sera la nueva capacidad del curso",
-                    "NUEVA CAPACIDAD DEL CURSO",
-                    JOptionPane.PLAIN_MESSAGE);
+                    "NUEVA CAPACIDAD DEL CURSO", JOptionPane.PLAIN_MESSAGE);
             courseservice.setNewCapacity(course, capacity);
-            JOptionPane.showMessageDialog(null, "Capacidad cambiada con eito", "CAPACIDAD CAMBIADA",
+            JOptionPane.showMessageDialog(null, "Capacidad cambiada con exito", "CAPACIDAD CAMBIADA",
                     JOptionPane.INFORMATION_MESSAGE);
         } catch (CourseNotFoundException | InvalidDataException | HeadlessException e) {
             JOptionPane.showMessageDialog(null, "Ha ocurrido un error: " + e.getMessage(), "ERROR",
@@ -115,6 +145,11 @@ public class CourseController {
         }
     }
 
+    /**
+     * Inscribe un estudiante en un curso existente.
+     *
+     * @param studentcontroller El controlador de estudiantes usado para buscar al estudiante.
+     */
     public void enrollStudent(StudentController studentcontroller) {
         try {
             Student student = studentcontroller.searchStudent();
@@ -142,6 +177,9 @@ public class CourseController {
         }
     }
 
+    /**
+     * Elimina un estudiante de un curso existente.
+     */
     public void removeStudentFromCourse() {
         try {
             Course course = searchCourse();
@@ -169,6 +207,10 @@ public class CourseController {
         }
     }
 
+    /**
+     * Lista todos los estudiantes inscritos en un curso específico.
+     * Muestra sus detalles en un mensaje.
+     */
     public void listStudentsByCourse() {
         try {
             Course course = searchCourse();
@@ -183,5 +225,4 @@ public class CourseController {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-
 }

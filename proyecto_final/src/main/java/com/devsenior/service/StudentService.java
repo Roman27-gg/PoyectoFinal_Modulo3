@@ -13,16 +13,30 @@ import com.devsenior.model.Course;
 import com.devsenior.model.Student;
 import com.devsenior.util.Validator;
 
+/**
+ * Servicio encargado de la gestión de estudiantes dentro del sistema.
+ * Permite registrar, buscar, modificar y listar estudiantes, así como
+ * administrar su relación con cursos.
+ */
 public class StudentService {
     private static final Logger logger = LogManager.getLogger(StudentService.class);
 
     private final Map<String, Student> students;
 
-    public StudentService (){
+    /**
+     * Constructor que inicializa el contenedor de estudiantes.
+     */
+    public StudentService() {
         students = new HashMap<>();
     }
 
-    public void addStudent(Student student) throws Exception{
+    /**
+     * Agrega un estudiante al sistema si no existe previamente.
+     *
+     * @param student objeto Student a agregar
+     * @throws Exception si el estudiante ya existe en el sistema
+     */
+    public void addStudent(Student student) throws Exception {
         if (!students.containsKey(student.getCode()) && !students.containsValue(student)) {
             students.put(student.getCode(), student);
         } else {
@@ -31,11 +45,20 @@ public class StudentService {
         }
     }
 
-    public Student createStudent(String name, String email) throws Exception, InvalidDataException{
-        if(!Validator.validateName(name)){
+    /**
+     * Crea un nuevo estudiante validando nombre y correo electrónico.
+     *
+     * @param name  nombre del estudiante
+     * @param email correo electrónico del estudiante
+     * @return el estudiante creado
+     * @throws Exception           si ocurre un error al agregar el estudiante
+     * @throws InvalidDataException si los datos son inválidos (nombre/email duplicado o no válido)
+     */
+    public Student createStudent(String name, String email) throws Exception, InvalidDataException {
+        if (!Validator.validateName(name)) {
             logger.warn("No se pudo crear el estudiante debido a nombre no valido");
             throw new InvalidDataException("Nombre no valido");
-        } else if (!Validator.validateEmail(email)){
+        } else if (!Validator.validateEmail(email)) {
             logger.warn("No se pudo crear el estudiante debido a email no valido");
             throw new InvalidDataException("Email no valido");
         } else if (!isNameAvaiable(name)) {
@@ -45,8 +68,8 @@ public class StudentService {
             logger.warn("No se pudo crear el estudiante debido a que el email ya esta en uso");
             throw new InvalidDataException("Email ya en uso");
         } else {
-            String id= Validator.createId();
-            while (!hasNotStudents()){
+            String id = Validator.createId();
+            while (!hasNotStudents()) {
                 Boolean close = true;
                 for (Student student1 : students.values()) {
                     if (id.equals(student1.getCode())) {
@@ -54,22 +77,29 @@ public class StudentService {
                         close = false;
                     }
                 }
-                if (close){
+                if (close) {
                     break;
                 }
             }
             Student student = new Student(id, name, email);
             addStudent(student);
-            logger.info("Se creo el estudiante {} con el codigo {} ",student.getName(), student.getCode());
+            logger.info("Se creo el estudiante {} con el codigo {} ", student.getName(), student.getCode());
             return student;
         }
     }
 
-    public Student findStudentById(String id) throws StudentNotFoundException{
+    /**
+     * Busca un estudiante por su código único.
+     *
+     * @param id código del estudiante
+     * @return el estudiante encontrado
+     * @throws StudentNotFoundException si no existe un estudiante con ese código
+     */
+    public Student findStudentById(String id) throws StudentNotFoundException {
         if (hasNotStudents()) {
             logger.warn("No existen actualmente datos de ningun estudiante");
             throw new StudentNotFoundException("No existen datos de ningun estudiante actualmente");
-        }else if (students.containsKey(id)) {
+        } else if (students.containsKey(id)) {
             logger.info("Se busco el estudiante {} con el codigo {}", students.get(id).getName(), students.get(id).getCode());
             return students.get(id);
         } else {
@@ -78,7 +108,14 @@ public class StudentService {
         }
     }
 
-    public Student findStudentByName(String name) throws StudentNotFoundException{
+    /**
+     * Busca un estudiante por su nombre.
+     *
+     * @param name nombre del estudiante
+     * @return el estudiante encontrado
+     * @throws StudentNotFoundException si no existe un estudiante con ese nombre
+     */
+    public Student findStudentByName(String name) throws StudentNotFoundException {
         if (hasNotStudents()) {
             logger.warn("No existen actualmente datos de ningun estudiante");
             throw new StudentNotFoundException("No existen datos de ningun estudiante actualmente");
@@ -93,21 +130,35 @@ public class StudentService {
         throw new StudentNotFoundException("No se encontro ningun estudiante con ese nombre ");
     }
 
-    public Map<String,Course> listCoursesByStudent(Student student) throws StudentNotFoundException, CourseNotFoundException{
+    /**
+     * Lista todos los cursos a los que está inscrito un estudiante.
+     *
+     * @param student estudiante a consultar
+     * @return mapa de cursos en los que está inscrito
+     * @throws StudentNotFoundException si el estudiante no existe
+     * @throws CourseNotFoundException  si el estudiante no está inscrito en ningún curso
+     */
+    public Map<String, Course> listCoursesByStudent(Student student) throws StudentNotFoundException, CourseNotFoundException {
         if (hasNotStudents()) {
             logger.warn("No existen actualmente datos de ningun estudiante");
             throw new StudentNotFoundException("No existen datos de ningun estudiante actualmente");
         } else if (!students.containsValue(student)) {
             logger.warn("Estudiante no encontrado para mostrar sus cursos");
             throw new StudentNotFoundException("No se encontro ningun estudiante ");
-        } else if (student.getCourses().isEmpty()){
+        } else if (student.getCourses().isEmpty()) {
             logger.warn("El estudiante no esta inscrito a ningun curso actualmente ");
-            throw new CourseNotFoundException("El estudiante no se encuentra inscrito a ningun curso actualmente"); 
+            throw new CourseNotFoundException("El estudiante no se encuentra inscrito a ningun curso actualmente");
         }
         return student.getCourses();
     }
 
-    public Map<String,Student> listStudents() throws StudentNotFoundException{
+    /**
+     * Lista todos los estudiantes registrados en el sistema.
+     *
+     * @return mapa de estudiantes
+     * @throws StudentNotFoundException si no hay estudiantes registrados
+     */
+    public Map<String, Student> listStudents() throws StudentNotFoundException {
         if (hasNotStudents()) {
             logger.warn("No existen actualmente datos de ningun estudiante");
             throw new StudentNotFoundException("No existen datos de ningun estudiante actualmente");
@@ -115,26 +166,42 @@ public class StudentService {
         return students;
     }
 
-    public void removeCourseFromStudent(Student student, Course course) throws StudentNotFoundException, CourseNotFoundException{
+    /**
+     * Elimina un curso de un estudiante y viceversa.
+     *
+     * @param student estudiante a modificar
+     * @param course  curso a remover
+     * @throws StudentNotFoundException si el estudiante no existe
+     * @throws CourseNotFoundException  si el curso no está asociado al estudiante
+     */
+    public void removeCourseFromStudent(Student student, Course course) throws StudentNotFoundException, CourseNotFoundException {
         if (hasNotStudents()) {
             logger.warn("No existen actualmente datos de ningun estudiante");
             throw new StudentNotFoundException("No existen datos de ningun estudiante actualmente");
-        } else if(!student.getCourses().containsValue(course)){
-            logger.warn("El estudiante {} con el codigo {} no se encuentra inscrito en el curso {} con codigo {}",student.getName(),student.getCode(),course.getName(),course.getCode());
+        } else if (!student.getCourses().containsValue(course)) {
+            logger.warn("El estudiante {} con el codigo {} no se encuentra inscrito en el curso {} con codigo {}", student.getName(), student.getCode(), course.getName(), course.getCode());
             throw new CourseNotFoundException("El estudiante no esta inscrito actualmente en ese curso");
         } else {
             course.removeStudent(student.getCode());
             student.removeCourse(course.getCode());
-            logger.info("El estudiante {} con el codigo {} removio el curso {} con codigo {} de su lista de cursos y viceversa",student.getName(),student.getCode(),course.getName(),course.getCode());
+            logger.info("El estudiante {} con el codigo {} removio el curso {} con codigo {} de su lista de cursos y viceversa", student.getName(), student.getCode(), course.getName(), course.getCode());
         }
     }
 
-    public void setNewName(Student student, String name) throws StudentNotFoundException, InvalidDataException{
-         if (hasNotStudents()) {
+    /**
+     * Cambia el nombre de un estudiante validando que no esté repetido ni sea inválido.
+     *
+     * @param student estudiante a modificar
+     * @param name    nuevo nombre
+     * @throws StudentNotFoundException si el estudiante no existe
+     * @throws InvalidDataException     si el nuevo nombre no es válido
+     */
+    public void setNewName(Student student, String name) throws StudentNotFoundException, InvalidDataException {
+        if (hasNotStudents()) {
             logger.warn("No existen actualmente datos de ningun estudiante");
             throw new StudentNotFoundException("No existen datos de ningun estudiante actualmente");
-        } else if (!Validator.validateName(name)){
-            logger.warn("No se pudo cambiar el nombre del estudiante {} con el codigo {} debido a que el nombre no es valido",student.getName(),student.getCode());
+        } else if (!Validator.validateName(name)) {
+            logger.warn("No se pudo cambiar el nombre del estudiante {} con el codigo {} debido a que el nombre no es valido", student.getName(), student.getCode());
             throw new InvalidDataException("Nombre no valido");
         } else if (!students.containsValue(student)) {
             logger.warn("Estudiante no encontrado para cambiar el nombre");
@@ -144,30 +211,44 @@ public class StudentService {
             throw new InvalidDataException("Nombre ya esta siendo usado");
         } else {
             student.setName(name);
-            logger.info("El estudiante {} con codigo {} cambio su nombre",student.getName(),student.getCode());
+            logger.info("El estudiante {} con codigo {} cambio su nombre", student.getName(), student.getCode());
         }
     }
 
-    public void setNewEmail(Student student, String email) throws StudentNotFoundException, InvalidDataException{
+    /**
+     * Cambia el email de un estudiante validando que no esté repetido ni sea inválido.
+     *
+     * @param student estudiante a modificar
+     * @param email   nuevo email
+     * @throws StudentNotFoundException si el estudiante no existe
+     * @throws InvalidDataException     si el nuevo email no es válido
+     */
+    public void setNewEmail(Student student, String email) throws StudentNotFoundException, InvalidDataException {
         if (hasNotStudents()) {
             logger.warn("No existen actualmente datos de ningun estudiante");
             throw new StudentNotFoundException("No existen datos de ningun estudiante actualmente");
-        } else if(!Validator.validateEmail(email)){
-            logger.warn("No se pudo cambiar el nombre del estudiante {} con el codigo {} debido a que el emaile es no valido",student.getName(),student.getCode());
+        } else if (!Validator.validateEmail(email)) {
+            logger.warn("No se pudo cambiar el nombre del estudiante {} con el codigo {} debido a que el emaile es no valido", student.getName(), student.getCode());
             throw new InvalidDataException("Nombre no valido");
-        } else if (!students.containsValue(student)){
+        } else if (!students.containsValue(student)) {
             logger.warn("Estudiante no encontrado para cambiar el nombre");
             throw new StudentNotFoundException("No se encontro ningun estudiante ");
-        } else if (!isEmailAvaiable(email)){
+        } else if (!isEmailAvaiable(email)) {
             logger.warn("El email ya esta en uso");
             throw new InvalidDataException("Email ya esta siendo usado");
         } else {
             student.setEmail(email);
-            logger.info("El estudiante {} con codigo {} cambio su email",student.getName(),student.getCode());
+            logger.info("El estudiante {} con codigo {} cambio su email", student.getName(), student.getCode());
         }
     }
 
-    public Boolean isNameAvaiable(String name){
+    /**
+     * Verifica si un nombre está disponible en el sistema.
+     *
+     * @param name nombre a verificar
+     * @return true si el nombre no está en uso, false en caso contrario
+     */
+    public Boolean isNameAvaiable(String name) {
         for (Student student : students.values()) {
             if (student.getName().equals(name)) {
                 return false;
@@ -176,7 +257,13 @@ public class StudentService {
         return true;
     }
 
-    public Boolean isEmailAvaiable(String email){
+    /**
+     * Verifica si un correo electrónico está disponible en el sistema.
+     *
+     * @param email correo a verificar
+     * @return true si el correo no está en uso, false en caso contrario
+     */
+    public Boolean isEmailAvaiable(String email) {
         for (Student student : students.values()) {
             if (student.getEmail().equals(email)) {
                 return false;
@@ -185,7 +272,12 @@ public class StudentService {
         return true;
     }
 
-     public boolean hasNotStudents() {
+    /**
+     * Verifica si no hay estudiantes registrados.
+     *
+     * @return true si no existen estudiantes, false en caso contrario
+     */
+    public boolean hasNotStudents() {
         return students.isEmpty();
     }
 }
